@@ -8,12 +8,17 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="org.jetbrains.plugins.template.services.MyApplicationService"/>
-        <projectService serviceImplementation="org.jetbrains.plugins.template.services.MyProjectService"/>
+        <projectService serviceImplementation="com.github.tbo.ideatwm.LruTabOrderService"/>
     </extensions>
 
     <applicationListeners>
-        <listener class="org.jetbrains.plugins.template.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+        <listener class="com.github.tbo.ideatwm.EditorSelectionListener"
+                  topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
     </applicationListeners>
+
+    <actions>
+        <action id="GotoNextTab" class="com.github.tbo.ideatwm.GotoNextTab" text="GotoNextTab"/>
+        <action id="EndTabSelection" class="com.github.tbo.ideatwm.EndTabSelection" text="EndTabSelection"/>
+        <action id="GotoPreviousTab" class="com.github.tbo.ideatwm.GotoPreviousTab" text="GotoPreviousTab"/>
+    </actions>
 </idea-plugin>
