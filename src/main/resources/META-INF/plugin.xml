@@ -6,6 +6,7 @@
     <!-- Product and plugin compatibility requirements -->
     <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="com.github.tbo.ideatwm.LruTabOrderService"/>
@@ -20,5 +21,6 @@
         <action id="GotoNextTab" class="com.github.tbo.ideatwm.GotoNextTab" text="GotoNextTab"/>
         <action id="EndTabSelection" class="com.github.tbo.ideatwm.EndTabSelection" text="EndTabSelection"/>
         <action id="GotoPreviousTab" class="com.github.tbo.ideatwm.GotoPreviousTab" text="GotoPreviousTab"/>
+        <action id="NewTerminal" class="com.github.tbo.ideatwm.NewTerminal" text="NewTerminal"/>
     </actions>
 </idea-plugin>

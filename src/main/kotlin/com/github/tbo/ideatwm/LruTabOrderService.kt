@@ -19,10 +19,12 @@ class LruTabOrderService(project: Project) {
         if (!isTabSelectionActive) {
             val pane = fileEditorManagerEx.currentWindow.tabbedPane;
             val position = pane.selectedIndex;
-            val currentTab = pane.tabs.getTabAt(position);
-            pane.tabs.removeTab(currentTab);
-            pane.tabs.addTab(currentTab, 0);
-            pane.tabs.select(currentTab, true);
+            if (position > 0) {
+                val currentTab = pane.tabs.getTabAt(position);
+                pane.tabs.removeTab(currentTab);
+                pane.tabs.addTab(currentTab, 0);
+                pane.tabs.select(currentTab, true);
+            }
         }
     }
 }
