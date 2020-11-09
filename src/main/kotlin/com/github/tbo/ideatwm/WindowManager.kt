@@ -4,14 +4,16 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Splitter
 import com.intellij.ui.OnePixelSplitter
+import java.awt.Component
+import javax.swing.FocusManager
 import javax.swing.JComponent
+import javax.swing.SwingUtilities
 
 class WindowManager(project: Project) {
     private val fileEditorManager = FileEditorManagerImpl.getInstance(project) as FileEditorManagerImpl
 
     fun addWindow(component: JComponent) {
         val masterWindow = fileEditorManager.windows[0]
-
         val panel = masterWindow.owner
         val currentComponent = panel.getComponent(0)
         var proportion = 0.6f
@@ -29,6 +31,7 @@ class WindowManager(project: Project) {
         splitter.firstComponent = component
         splitter.secondComponent = secondComponent
         component.requestFocusInWindow()
+        component.requestFocus()
         updateStackDimensions(secondComponent)
     }
 
@@ -43,5 +46,37 @@ class WindowManager(project: Project) {
             return totalDepth
         }
         return depth + 1
+    }
+
+    fun focusWindow() {
+        val masterWindow = fileEditorManager.windows[0]
+        val panel = masterWindow.owner
+        val currentComponent = panel.getComponent(0)
+        val focusOwner = FocusManager.getCurrentManager().focusOwner
+        val isFocused = { c: Component -> SwingUtilities.isDescendingFrom(focusOwner, c) }
+        val focusedSplitter = getFocusedSplitter(currentComponent, isFocused)
+        if (focusedSplitter != null && currentComponent is Splitter) {
+            val temp = currentComponent.firstComponent
+            if (isFocused(focusedSplitter.firstComponent)) {
+                currentComponent.firstComponent = focusedSplitter.firstComponent
+                focusedSplitter.firstComponent = temp
+            } else {
+                currentComponent.firstComponent = focusedSplitter.secondComponent
+                focusedSplitter.secondComponent = temp
+            }
+            currentComponent.firstComponent.requestFocusInWindow()
+            currentComponent.firstComponent.requestFocus()
+        }
+    }
+
+    private fun getFocusedSplitter(component: Component, isFocused: (Component) -> Boolean): Splitter? {
+        if (component is Splitter) {
+            return if (isFocused(component.firstComponent) || component.secondComponent !is Splitter && isFocused(component.secondComponent)) {
+                component
+            } else {
+                getFocusedSplitter(component.secondComponent, isFocused)
+            }
+        }
+        return null
     }
 }

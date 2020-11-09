@@ -23,5 +23,8 @@
         <action id="EndTabSelection" class="com.github.tbo.ideatwm.EndTabSelection" text="EndTabSelection"/>
         <action id="GotoPreviousTab" class="com.github.tbo.ideatwm.GotoPreviousTab" text="GotoPreviousTab"/>
         <action id="NewTerminal" class="com.github.tbo.ideatwm.NewTerminal" text="NewTerminal"/>
+        <action id="FocusWindow" class="com.github.tbo.ideatwm.FocusWindow" text="FocusWindow">
+            <keyboard-shortcut keymap="$default" first-keystroke="meta ENTER"/>
+        </action>
     </actions>
 </idea-plugin>
