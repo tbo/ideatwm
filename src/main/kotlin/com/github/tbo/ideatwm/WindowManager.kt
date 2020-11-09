@@ -15,11 +15,11 @@ class WindowManager(project: Project) {
     fun addWindow(component: JComponent) {
         val masterWindow = fileEditorManager.windows[0]
         val panel = masterWindow.owner
-        val currentComponent = panel.getComponent(0)
+        val mainComponent = getMainComponent()
         var proportion = 0.6f
-        val secondComponent = if (currentComponent is Splitter) {
-            proportion = currentComponent.proportion
-            currentComponent
+        val secondComponent = if (mainComponent is Splitter) {
+            proportion = mainComponent.proportion
+            mainComponent
         } else {
             masterWindow.tabbedPane.component
         }
@@ -49,32 +49,51 @@ class WindowManager(project: Project) {
     }
 
     fun focusWindow() {
-        val masterWindow = fileEditorManager.windows[0]
-        val panel = masterWindow.owner
-        val currentComponent = panel.getComponent(0)
-        val focusOwner = FocusManager.getCurrentManager().focusOwner
-        val isFocused = { c: Component -> SwingUtilities.isDescendingFrom(focusOwner, c) }
-        val focusedSplitter = getFocusedSplitter(currentComponent, isFocused)
-        if (focusedSplitter != null && currentComponent is Splitter) {
-            val temp = currentComponent.firstComponent
-            if (isFocused(focusedSplitter.firstComponent)) {
-                currentComponent.firstComponent = focusedSplitter.firstComponent
+        val mainComponent = getMainComponent()
+        val focusedSplitter = getFocusedSplitter(mainComponent)
+        if (focusedSplitter != null && mainComponent is Splitter) {
+            val temp = mainComponent.firstComponent
+            if (hasFocus(focusedSplitter.firstComponent)) {
+                mainComponent.firstComponent = focusedSplitter.firstComponent
                 focusedSplitter.firstComponent = temp
             } else {
-                currentComponent.firstComponent = focusedSplitter.secondComponent
+                mainComponent.firstComponent = focusedSplitter.secondComponent
                 focusedSplitter.secondComponent = temp
             }
-            currentComponent.firstComponent.requestFocusInWindow()
-            currentComponent.firstComponent.requestFocus()
+            mainComponent.firstComponent.requestFocusInWindow()
+            mainComponent.firstComponent.requestFocus()
         }
     }
 
-    private fun getFocusedSplitter(component: Component, isFocused: (Component) -> Boolean): Splitter? {
+    fun getFocusedWindow(component: Component = getMainComponent()): Component? {
+        return if (component is Splitter) {
+            if (hasFocus(component.firstComponent)) {
+                component.firstComponent
+            } else {
+                getFocusedWindow(component.secondComponent)
+            }
+        } else if (hasFocus(component)) {
+            component
+        } else {
+            null
+        }
+
+    }
+
+    private fun getMainComponent(): Component {
+        return fileEditorManager.windows[0].owner.getComponent(0)
+    }
+
+    fun hasFocus(component: Component): Boolean {
+        return SwingUtilities.isDescendingFrom(FocusManager.getCurrentManager().focusOwner, component)
+    }
+
+    private fun getFocusedSplitter(component: Component): Splitter? {
         if (component is Splitter) {
-            return if (isFocused(component.firstComponent) || component.secondComponent !is Splitter && isFocused(component.secondComponent)) {
+            return if (hasFocus(component.firstComponent) || component.secondComponent !is Splitter && hasFocus(component.secondComponent)) {
                 component
             } else {
-                getFocusedSplitter(component.secondComponent, isFocused)
+                getFocusedSplitter(component.secondComponent)
             }
         }
         return null

@@ -11,7 +11,7 @@ class GotoPreviousTab : AnAction() {
 
         if (event.project != null) {
             val manager = FileEditorManagerEx.getInstanceEx(event.project!!);
-            val pane = manager.currentWindow.tabbedPane;
+            val pane = manager.windows[0].tabbedPane;
             val previousTab = pane.tabs.getTabAt(Integer.max(pane.selectedIndex - 1, 0));
             pane.tabs.select(previousTab, true);
         }

@@ -16,8 +16,8 @@ class LruTabOrderService(project: Project) {
         }
 
     fun reorderTabs() {
-        if (!isTabSelectionActive && fileEditorManagerEx.currentWindow != null) {
-            val pane = fileEditorManagerEx.currentWindow.tabbedPane;
+        if (!isTabSelectionActive) {
+            val pane = fileEditorManagerEx.windows[0].tabbedPane;
             val position = pane.selectedIndex;
             if (position > 0) {
                 val currentTab = pane.tabs.getTabAt(position);
