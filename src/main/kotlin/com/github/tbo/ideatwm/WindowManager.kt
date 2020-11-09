@@ -30,8 +30,7 @@ class WindowManager(project: Project) {
         panel.add(splitter)
         splitter.firstComponent = component
         splitter.secondComponent = secondComponent
-        component.requestFocusInWindow()
-        component.requestFocus()
+        focus(component)
         updateStackDimensions(secondComponent)
     }
 
@@ -65,19 +64,35 @@ class WindowManager(project: Project) {
         }
     }
 
-    fun getFocusedWindow(component: Component = getMainComponent()): Component? {
-        return if (component is Splitter) {
-            if (hasFocus(component.firstComponent)) {
-                component.firstComponent
-            } else {
-                getFocusedWindow(component.secondComponent)
-            }
-        } else if (hasFocus(component)) {
-            component
-        } else {
-            null
+    private fun getWindows(): List<Component> {
+        var component = getMainComponent()
+        val windows = mutableListOf<Component>()
+        while (component is Splitter) {
+            windows.add(component.firstComponent)
+            component = component.secondComponent
         }
+        windows.add(component)
+        return windows.toList()
 
+    }
+
+    private fun focus(component: Component) {
+        component.requestFocusInWindow()
+        component.requestFocus()
+    }
+
+    fun nextWindow() {
+        val windows = getWindows()
+        val currentIndex = windows.indexOfLast { hasFocus(it) }
+        val nextWindow = windows.elementAtOrElse(currentIndex + 1) { windows.first() }
+        focus(nextWindow)
+    }
+
+    fun previousWindow() {
+        val windows = getWindows()
+        val currentIndex = windows.indexOfLast { hasFocus(it) }
+        val nextWindow = windows.elementAtOrElse(currentIndex - 1) { windows.last() }
+        focus(nextWindow)
     }
 
     private fun getMainComponent(): Component {

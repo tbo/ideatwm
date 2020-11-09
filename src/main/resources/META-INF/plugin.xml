@@ -24,7 +24,13 @@
         <action id="GotoPreviousTab" class="com.github.tbo.ideatwm.GotoPreviousTab" text="GotoPreviousTab"/>
         <action id="NewTerminal" class="com.github.tbo.ideatwm.NewTerminal" text="NewTerminal"/>
         <action id="FocusWindow" class="com.github.tbo.ideatwm.FocusWindow" text="FocusWindow">
-            <keyboard-shortcut keymap="$default" first-keystroke="meta ENTER"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="control ENTER" replace-all="true"/>
+        </action>
+        <action id="GotoNextWindow" class="com.github.tbo.ideatwm.GotoNextWindow" text="GotoNextWindow">
+            <keyboard-shortcut keymap="$default" first-keystroke="control J" replace-all="true"/>
+        </action>
+        <action id="GotoPreviousWindow" class="com.github.tbo.ideatwm.GotoPreviousWindow" text="GotoPreviousWindow">
+            <keyboard-shortcut keymap="$default" first-keystroke="control K" replace-all="true"/>
         </action>
     </actions>
 </idea-plugin>
