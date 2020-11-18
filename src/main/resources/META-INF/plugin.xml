@@ -35,5 +35,11 @@
         <action id="DeleteWindow" class="com.github.tbo.ideatwm.DeleteWindow" text="DeleteWindow">
             <keyboard-shortcut keymap="$default" first-keystroke="control D" replace-all="true"/>
         </action>
+        <action id="GrowMasterWindow" class="com.github.tbo.ideatwm.GrowMasterWindow" text="GrowMasterWindow">
+            <keyboard-shortcut keymap="$default" first-keystroke="control L"/>
+        </action>
+        <action id="ShrinkMasterWindow" class="com.github.tbo.ideatwm.ShrinkMasterWindow" text="ShrinkMasterWindow">
+            <keyboard-shortcut keymap="$default" first-keystroke="control H"/>
+        </action>
     </actions>
 </idea-plugin>

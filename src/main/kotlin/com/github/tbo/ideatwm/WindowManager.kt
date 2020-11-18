@@ -128,6 +128,20 @@ class WindowManager(project: Project) {
         }
     }
 
+    fun growMasterWindow() {
+        val mainComponent = getMainComponent()
+        if (mainComponent is Splitter) {
+            mainComponent.proportion += 0.05f
+        }
+    }
+
+    fun shrinkMasterWindow() {
+        val mainComponent = getMainComponent()
+        if (mainComponent is Splitter) {
+            mainComponent.proportion -= 0.05f
+        }
+    }
+
     private fun updateDimensions() {
         val mainComponent = getMainComponent()
         if (mainComponent is Splitter) {
