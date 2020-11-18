@@ -32,5 +32,8 @@
         <action id="GotoPreviousWindow" class="com.github.tbo.ideatwm.GotoPreviousWindow" text="GotoPreviousWindow">
             <keyboard-shortcut keymap="$default" first-keystroke="control K" replace-all="true"/>
         </action>
+        <action id="DeleteWindow" class="com.github.tbo.ideatwm.DeleteWindow" text="DeleteWindow">
+            <keyboard-shortcut keymap="$default" first-keystroke="control D" replace-all="true"/>
+        </action>
     </actions>
 </idea-plugin>

@@ -4,6 +4,8 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Splitter
 import com.intellij.ui.OnePixelSplitter
+import com.intellij.ui.tabs.impl.SingleHeightTabs
+import org.jetbrains.plugins.terminal.ShellTerminalWidget
 import java.awt.Component
 import javax.swing.FocusManager
 import javax.swing.JComponent
@@ -13,6 +15,10 @@ class WindowManager(project: Project) {
     private val fileEditorManager = FileEditorManagerImpl.getInstance(project) as FileEditorManagerImpl
 
     fun addWindow(component: JComponent) {
+        if (fileEditorManager.windows.isEmpty()) {
+            return
+        }
+
         val masterWindow = fileEditorManager.windows[0]
         val panel = masterWindow.owner
         val mainComponent = getMainComponent()
@@ -73,7 +79,6 @@ class WindowManager(project: Project) {
         }
         windows.add(component)
         return windows.toList()
-
     }
 
     private fun focus(component: Component) {
@@ -95,11 +100,63 @@ class WindowManager(project: Project) {
         focus(nextWindow)
     }
 
+    fun deleteWindow() {
+        val windows = getWindows()
+        val focusedWindow = windows.findLast { hasFocus(it) }
+        if (focusedWindow is SingleHeightTabs) {
+            focusedWindow.removeTab(focusedWindow.selectedInfo)
+            return
+        }
+        val splitters = getSplitters()
+        val availableSplitters = splitters.filter { it.firstComponent != focusedWindow && it.secondComponent != focusedWindow }
+        val focusedSplitter = splitters.findLast { hasFocus(it) }
+        if (focusedWindow is ShellTerminalWidget) {
+            if (availableSplitters.isEmpty()) {
+                val masterWindow = fileEditorManager.windows[0]
+                val panel = masterWindow.owner
+                panel.removeAll()
+                panel.add(if (focusedWindow == windows.first()) focusedSplitter!!.secondComponent else focusedSplitter!!.firstComponent)
+            }
+            availableSplitters.reduce { a, b ->
+                a.secondComponent = b
+                b
+            }
+            setMainComponent(availableSplitters.first())
+            focusedWindow.close()
+            focusedSplitter?.dispose()
+            updateDimensions()
+        }
+    }
+
+    private fun updateDimensions() {
+        val mainComponent = getMainComponent()
+        if (mainComponent is Splitter) {
+            mainComponent.proportion = 0.6f
+            mainComponent.orientation = false
+            updateStackDimensions(mainComponent.secondComponent)
+        }
+    }
+
+    private fun getSplitters(): List<Splitter> {
+        var component = getMainComponent()
+        val splitters = mutableListOf<Splitter>()
+        while (component is Splitter) {
+            splitters.add(component)
+            component = component.secondComponent
+        }
+        return splitters.toList()
+    }
+
     private fun getMainComponent(): Component {
         return fileEditorManager.windows[0].owner.getComponent(0)
     }
 
-    fun hasFocus(component: Component): Boolean {
+    private fun setMainComponent(component: Component) {
+        fileEditorManager.windows[0].owner.removeAll()
+        fileEditorManager.windows[0].owner.add(component)
+    }
+
+    private fun hasFocus(component: Component): Boolean {
         return SwingUtilities.isDescendingFrom(FocusManager.getCurrentManager().focusOwner, component)
     }
 
