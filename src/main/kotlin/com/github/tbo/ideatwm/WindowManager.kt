@@ -65,8 +65,7 @@ class WindowManager(project: Project) {
                 mainComponent.firstComponent = focusedSplitter.secondComponent
                 focusedSplitter.secondComponent = temp
             }
-            mainComponent.firstComponent.requestFocusInWindow()
-            mainComponent.firstComponent.requestFocus()
+            focus(mainComponent.firstComponent)
         }
     }
 
@@ -82,8 +81,11 @@ class WindowManager(project: Project) {
     }
 
     private fun focus(component: Component) {
-        component.requestFocusInWindow()
-        component.requestFocus()
+        if (component is ShellTerminalWidget) {
+            component.requestFocusInWindow()
+        } else {
+            component.requestFocus()
+        }
     }
 
     fun nextWindow() {

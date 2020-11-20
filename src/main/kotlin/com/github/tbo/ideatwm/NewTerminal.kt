@@ -32,8 +32,6 @@ class NewTerminal : AnAction() {
             override fun onPanelResize(p0: Dimension?, p1: RequestOrigin?) {}
 
             override fun onSessionChanged(terminalSession: TerminalSession?) {
-                val notification = Notification("group", "Session changed", terminalSession.toString(), NotificationType.INFORMATION)
-                Notifications.Bus.notify(notification)
                 if (terminalSession != null && !terminalSession.ttyConnector.isConnected) {
                     terminalSession.close()
                 }
