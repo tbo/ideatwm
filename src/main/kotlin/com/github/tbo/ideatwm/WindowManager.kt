@@ -58,8 +58,9 @@ class WindowManager(project: Project) {
         val currentWindow = getWindows().findLast { hasFocus(it) }
         if (currentWindow == getWindows().first() && previousFocusedWindow != null) {
             focusWindow(previousFocusedWindow!!)
+        } else {
+            currentWindow?.let { focusWindow(it) }
         }
-        currentWindow?.let { focusWindow(it) }
     }
 
     fun focusEditorWindow() {
@@ -69,19 +70,20 @@ class WindowManager(project: Project) {
     private fun focusWindow(window: Component) {
         val mainComponent = getMainComponent()
         val focusedSplitter = getSplitters().findLast { it.firstComponent == window || it.secondComponent == window }
-        if (focusedSplitter != null && mainComponent is Splitter && window != getWindows().first()) {
-            previousFocusedWindow = mainComponent.firstComponent
-            if (mainComponent == focusedSplitter) {
-                mainComponent.swapComponents()
-                return
-            } else {
-                val temp = mainComponent.firstComponent
-                if (focusedSplitter.firstComponent == window) {
-                    mainComponent.firstComponent = focusedSplitter.firstComponent
-                    focusedSplitter.firstComponent = temp
+        if (mainComponent is Splitter) {
+            if (focusedSplitter != null && window != getWindows().first()) {
+                previousFocusedWindow = mainComponent.firstComponent
+                if (mainComponent == focusedSplitter) {
+                    mainComponent.swapComponents()
                 } else {
-                    mainComponent.firstComponent = focusedSplitter.secondComponent
-                    focusedSplitter.secondComponent = temp
+                    val temp = mainComponent.firstComponent
+                    if (focusedSplitter.firstComponent == window) {
+                        mainComponent.firstComponent = focusedSplitter.firstComponent
+                        focusedSplitter.firstComponent = temp
+                    } else {
+                        mainComponent.firstComponent = focusedSplitter.secondComponent
+                        focusedSplitter.secondComponent = temp
+                    }
                 }
             }
             focus(mainComponent.firstComponent)
