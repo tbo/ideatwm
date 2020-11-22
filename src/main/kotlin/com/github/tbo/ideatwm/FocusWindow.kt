@@ -8,7 +8,7 @@ class FocusWindow : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
         if (event.project != null) {
             val windowManager = event.project!!.getService(WindowManager::class.java)
-            windowManager.focusWindow()
+            windowManager.focusCurrentWindow()
         }
     }
 }
