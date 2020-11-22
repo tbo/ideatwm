@@ -130,39 +130,37 @@ class WindowManager(project: Project) {
     fun deleteWindow() {
         val windows = getWindows()
         val focusedWindow = windows.findLast { hasFocus(it) }
-        if (focusedWindow is SingleHeightTabs) {
-            focusedWindow.removeTab(focusedWindow.selectedInfo)
+        if (focusedWindow !is ShellTerminalWidget) {
+            fileEditorManager.windows[0].tabbedPane.removeTabAt(0, 0)
             return
         }
         val splitters = getSplitters()
         val availableSplitters = splitters.filter { it.firstComponent != focusedWindow && it.secondComponent != focusedWindow }
         val focusedSplitter = splitters.findLast { hasFocus(it) }
-        if (focusedWindow is ShellTerminalWidget) {
-            if (availableSplitters.isEmpty()) {
-                val masterWindow = fileEditorManager.windows[0]
-                val panel = masterWindow.owner
-                panel.removeAll()
-                val component = if (focusedWindow == windows.first()) focusedSplitter!!.secondComponent else focusedSplitter!!.firstComponent
-                panel.add(component)
-                component.requestFocusInWindow()
+        if (availableSplitters.isEmpty()) {
+            val masterWindow = fileEditorManager.windows[0]
+            val panel = masterWindow.owner
+            panel.removeAll()
+            val component = if (focusedWindow == windows.first()) focusedSplitter!!.secondComponent else focusedSplitter!!.firstComponent
+            panel.add(component)
+            component.requestFocusInWindow()
+        } else {
+            if (focusedSplitter == splitters.last()) {
+                val secondToLastSplitter = splitters[splitters.size - 2]
+                secondToLastSplitter.secondComponent = if (focusedWindow == focusedSplitter.firstComponent) focusedSplitter.secondComponent else focusedSplitter.firstComponent
+                focus(secondToLastSplitter.secondComponent)
             } else {
-                if (focusedSplitter == splitters.last()) {
-                    val secondToLastSplitter = splitters[splitters.size - 2]
-                    secondToLastSplitter.secondComponent = if (focusedWindow == focusedSplitter.firstComponent) focusedSplitter.secondComponent else focusedSplitter.firstComponent
-                    focus(secondToLastSplitter.secondComponent)
-                } else {
-                    availableSplitters.reduce { a, b ->
-                        a.secondComponent = b
-                        b
-                    }
-                    focus(splitters[splitters.indexOf(focusedSplitter) + 1].firstComponent)
+                availableSplitters.reduce { a, b ->
+                    a.secondComponent = b
+                    b
                 }
+                focus(splitters[splitters.indexOf(focusedSplitter) + 1].firstComponent)
             }
-            setMainComponent(availableSplitters.first())
-            focusedWindow.close()
-            focusedSplitter?.dispose()
-            updateDimensions()
         }
+        setMainComponent(availableSplitters.first())
+        focusedWindow.close()
+        focusedSplitter?.dispose()
+        updateDimensions()
     }
 
     fun growMasterWindow() {
