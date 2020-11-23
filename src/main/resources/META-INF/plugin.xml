@@ -12,6 +12,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="com.github.tbo.ideatwm.LruTabOrderService"/>
         <projectService serviceImplementation="com.github.tbo.ideatwm.WindowManager"/>
+        <themeProvider id="32ee0cc0-e621-4f73-8aea-685ccab8f4a0" path="/IdeaTWM.theme.json"/>
     </extensions>
 
     <applicationListeners>

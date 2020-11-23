@@ -4,7 +4,6 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Splitter
 import com.intellij.ui.OnePixelSplitter
-import com.intellij.ui.tabs.impl.SingleHeightTabs
 import org.jetbrains.plugins.terminal.ShellTerminalWidget
 import java.awt.Component
 import javax.swing.FocusManager
@@ -132,6 +131,7 @@ class WindowManager(project: Project) {
         val focusedWindow = windows.findLast { hasFocus(it) }
         if (focusedWindow !is ShellTerminalWidget) {
             fileEditorManager.windows[0].tabbedPane.removeTabAt(0, 0)
+            focusEditorWindow()
             return
         }
         val splitters = getSplitters()
