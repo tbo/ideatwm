@@ -108,6 +108,7 @@ class WindowManager(project: Project) {
         if (component is ShellTerminalWidget) {
             component.requestFocusInWindow()
         } else {
+            component.requestFocus()
             fileEditorManager.windows[0].tabbedPane.selectedIndex = 0
         }
     }

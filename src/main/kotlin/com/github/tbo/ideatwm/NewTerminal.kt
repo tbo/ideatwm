@@ -23,8 +23,8 @@ import javax.swing.border.EmptyBorder
 
 class NewTerminal : AnAction() {
 
-    val focusColor = Color(30, 45, 89)
-    val defaultColor = Color(11, 13, 15)
+    private val focusColor = Color(25, 40, 84)
+    private val defaultColor = Color(11, 13, 15)
 
     override fun actionPerformed(event: AnActionEvent) {
 
@@ -53,15 +53,14 @@ class NewTerminal : AnAction() {
                     }
                     filenameLabel.text = path.replace("fish ", "")
                     gitLabel.text = branch
-                    if (branch.isNotBlank()) {
-                        gitLabel.icon = AllIcons.Vcs.Branch
-                    }
+                    gitLabel.icon = if (branch.isNotBlank()) AllIcons.Vcs.Branch else null
                 }
             }
         })
         val statusPanel = JPanel()
         statusPanel.layout = BorderLayout()
         statusPanel.border = EmptyBorder(8, 8, 8, 8)
+        statusPanel.background = focusColor
         statusPanel.add(filenameLabel, BorderLayout.LINE_START)
         statusPanel.add(gitLabel, BorderLayout.LINE_END)
 
