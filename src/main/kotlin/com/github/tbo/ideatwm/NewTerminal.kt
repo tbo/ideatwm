@@ -5,17 +5,27 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
+import com.intellij.terminal.JBTerminalPanel
 import com.jediterm.terminal.RequestOrigin
 import com.jediterm.terminal.ui.TerminalPanelListener
 import com.jediterm.terminal.ui.TerminalSession
 import org.jetbrains.plugins.terminal.TerminalView
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Dimension
+import java.awt.event.FocusEvent
+import java.awt.event.FocusListener
 import javax.swing.JLabel
+import javax.swing.JLayeredPane
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 import javax.swing.border.EmptyBorder
 
 class NewTerminal : AnAction() {
+
+    val focusColor = Color(30, 45, 89)
+    val defaultColor = Color(11, 13, 15)
+
     override fun actionPerformed(event: AnActionEvent) {
 
         val windowManager = event.project!!.getService(WindowManager::class.java)
@@ -56,6 +66,18 @@ class NewTerminal : AnAction() {
         statusPanel.add(gitLabel, BorderLayout.LINE_END)
 
         terminalWidget.add(statusPanel, BorderLayout.PAGE_END)
+
+        val terminalPanel = (terminalWidget.components[0] as JLayeredPane).components[0] as JBTerminalPanel
+
+        terminalPanel.addFocusListener(object : FocusListener {
+            override fun focusGained(e: FocusEvent?) {
+                statusPanel.background = focusColor
+            }
+
+            override fun focusLost(e: FocusEvent?) {
+                statusPanel.background = defaultColor
+            }
+        })
 
         windowManager.addWindow(terminalWidget.component)
     }
